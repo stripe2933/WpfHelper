@@ -1,0 +1,67 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:WpfHelper.Controls"
+                    xmlns:conv="clr-namespace:WpfHelper.Converters"
+                    xmlns:valid="clr-namespace:WpfHelper.Validations"
+                    xmlns:behavior="clr-namespace:WpfHelper.Behaviors">
+    <Style TargetType="{x:Type local:NumericUpDown}">
+        <Setter Property="Maximum" Value="100"/>
+        <Setter Property="Minimum" Value="0"/>
+        <Setter Property="Value" Value="0"/>
+        <Setter Property="Increment" Value="1"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:NumericUpDown}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{Binding Source={x:Static SystemParameters.VerticalScrollBarWidth}, Converter={conv:DoubleGridLengthConverter}}"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Grid.RowSpan="2" behavior:EnterBindingUpdater.BindingSource="TextBox.Text">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <Trigger Property="Validation.HasError" Value="True">
+                                                <Setter Property="ToolTip" Value="{Binding (Validation.Errors)/ErrorContent, RelativeSource={RelativeSource Self}}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+
+                                <TextBox.Text>
+                                    <Binding Path="Value" RelativeSource="{RelativeSource TemplatedParent}" Mode="TwoWay" UpdateSourceTrigger="Default">
+                                        <Binding.ValidationRules>
+                                            <valid:IntRangeRule>
+                                                <valid:IntRangeRule.Wrapper>
+                                                    <valid:IntRangeRuleWrapper Maximum="{TemplateBinding Maximum}" Minimum="{TemplateBinding Minimum}"/>
+                                                </valid:IntRangeRule.Wrapper>
+                                            </valid:IntRangeRule>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+
+                                <TextBox.InputBindings>
+                                    <KeyBinding Gesture="Up" Command="{Binding IncreaseValueCommand, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    <KeyBinding Gesture="Down" Command="{Binding DecreaseValueCommand, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <RepeatButton Grid.Column="1" Command="{Binding IncreaseValueCommand, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path Fill="Black" Data="M 0 3 L 6 3 L 3 0 Z" IsHitTestVisible="False"/>
+                            </RepeatButton>
+                            <RepeatButton Grid.Row="1" Grid.Column="1" Command="{Binding DecreaseValueCommand, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path Fill="Black" Data="M 0 0 L 6 0 L 3 3 Z" IsHitTestVisible="False"/>
+                            </RepeatButton>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

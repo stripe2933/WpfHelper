@@ -44,7 +44,7 @@ namespace WpfHelper.Controls
                 return;
             }
 
-            numericUpDown.ValueChanged.Invoke(numericUpDown, EventArgs.Empty);
+            numericUpDown.ValueChanged?.Invoke(numericUpDown, EventArgs.Empty);
         }
 
         public int Increment
